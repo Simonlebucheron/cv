@@ -14,4 +14,15 @@
     <p>Bienvenue sur mon CV en ligne.</p>
     <a href="CV_SDELAIGUE_FR.pdf" download>Télécharger le CV (PDF)</a>
 </body>
+<p id="version"></p>
+
+<script>
+    fetch("version.json")
+    .then(r => r.json())
+    .then(v => {
+      document.getElementById("version").innerHTML =
+        "Version " + v.version + " - " + v.date;
+    });
+</script>
 </html>
+
