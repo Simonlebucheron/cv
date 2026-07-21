@@ -10,10 +10,11 @@ Online resume website hosted on GitHub Pages.
 
 ## Release Process
 
-1. Update `VERSION` with `cv-x.y.z`.
-2. Commit and push to `main` (check/deploy run automatically).
-3. Create and push the `cv-x.y.z` tag.
-4. Verify the GitHub Release and the attached PDF asset.
+1. Update your CV document version (for example `CV_VERSION`) to `cv-x.y.z`, then export the PDF.
+2. Update `VERSION` with the exact same value.
+3. Commit and push to `main` (check/deploy run automatically).
+4. Create and push the `cv-x.y.z` tag.
+5. Verify the GitHub Release and the attached PDF asset.
 
 ## Tag Convention
 
