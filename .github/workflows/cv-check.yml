@@ -92,8 +92,14 @@ jobs:
         run: |
           set -euo pipefail
           EXPECTED_VERSION=$(tr -d '[:space:]' < VERSION)
+          TEXT_FILE=$(mktemp)
+          NORMALIZED_FILE=$(mktemp)
+          trap 'rm -f "$TEXT_FILE" "$NORMALIZED_FILE"' EXIT
 
-          if ! pdftotext "$CV_FILE" - | tr -d '\r' | grep -Fq "$EXPECTED_VERSION"; then
+          pdftotext "$CV_FILE" "$TEXT_FILE"
+          tr -d '\r' < "$TEXT_FILE" > "$NORMALIZED_FILE"
+
+          if ! grep -Fq "$EXPECTED_VERSION" "$NORMALIZED_FILE"; then
             echo "Error: PDF must include version $EXPECTED_VERSION"
             exit 1
           fi
