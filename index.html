@@ -17,13 +17,17 @@
         <p id="site-version"></p>
 
         <script>
-                fetch("version.json")
+                fetch("version.json", { cache: "no-store" })
                 .then(r => r.json())
                 .then(v => {
+                    const cvVersion = v.cvVersion || v.version || "indisponible";
+                    const siteVersion = v.siteVersion || "indisponible";
+                    const deployedAt = v.deployedAt || v.date || "indisponible";
+
                     document.getElementById("cv-version").textContent =
-                        "Version du CV: " + v.cvVersion;
+                        "Version du CV: " + cvVersion;
                     document.getElementById("site-version").textContent =
-                        "Version de la page: " + v.siteVersion + " (mise en ligne: " + v.deployedAt + ")";
+                        "Version de la page: " + siteVersion + " (mise en ligne: " + deployedAt + ")";
                 })
                 .catch(() => {
                     document.getElementById("cv-version").textContent = "Version du CV indisponible";

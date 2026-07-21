@@ -12,7 +12,6 @@ on:
       - cv-simon-delaigue-fr.pdf
       - index.html
       - VERSION
-      - version.json
       - .github/workflows/*.yml
   pull_request:
     branches:
@@ -23,7 +22,6 @@ on:
       - cv-simon-delaigue-fr.pdf
       - index.html
       - VERSION
-      - version.json
       - .github/workflows/*.yml
 
 permissions:
