@@ -8,6 +8,8 @@ on:
   pull_request:
     branches:
       - main
+env:
+  cv_file: cv-simon-delaigue-fr.pdf
 
 jobs:
   check-cv:
@@ -26,21 +28,21 @@ jobs:
 
       - name: Check PDF exists
         run: |
-          test -f CV_SDELAIGUE_FR.pdf
+          test -f "$cv_file"
 
       - name: Check PDF size
         run: |
-          SIZE=$(stat -c%s CV_SDELAIGUE_FR.pdf)
+          SIZE=$(stat -c%s "$cv_file")
           echo "PDF size: $SIZE bytes"
           test $SIZE -lt 2000000
 
       - name: Extract PDF metadata
         run: |
-          exiftool CV_SDELAIGUE_FR.pdf
+          exiftool "$cv_file"
 
       - name: Check PDF pages
         run: |
-          pdfinfo CV_SDELAIGUE_FR.pdf | grep Pages
+          pdfinfo "$cv_file" | grep Pages
 
       - name: Check HTML
         run: |
