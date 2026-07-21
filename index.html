@@ -13,16 +13,23 @@
     <h1>Simon Delaigue</h1>
     <p>Bienvenue sur mon CV en ligne.</p>
     <a href="cv-simon-delaigue-fr.pdf" download>Télécharger le CV (PDF)</a>
-</body>
-<p id="version"></p>
+        <p id="cv-version"></p>
+        <p id="site-version"></p>
 
-<script>
-    fetch("version.json")
-    .then(r => r.json())
-    .then(v => {
-      document.getElementById("version").innerHTML =
-        "Version " + v.version + " - " + v.date;
-    });
-</script>
+        <script>
+                fetch("version.json")
+                .then(r => r.json())
+                .then(v => {
+                    document.getElementById("cv-version").textContent =
+                        "Version du CV: " + v.cvVersion;
+                    document.getElementById("site-version").textContent =
+                        "Version de la page: " + v.siteVersion + " (mise en ligne: " + v.deployedAt + ")";
+                })
+                .catch(() => {
+                    document.getElementById("cv-version").textContent = "Version du CV indisponible";
+                    document.getElementById("site-version").textContent = "Version de la page indisponible";
+                });
+        </script>
+</body>
 </html>
 

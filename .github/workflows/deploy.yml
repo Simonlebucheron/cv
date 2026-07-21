@@ -8,6 +8,7 @@ on:
       - cv-simon-delaigue-fr.pdf
       - index.html
       - VERSION
+      - version.json
       - CNAME
       - .github/workflows/deploy.yml
   workflow_dispatch:
@@ -37,13 +38,15 @@ jobs:
       - name: Generate version.json for deployment
         run: |
           set -euo pipefail
-          TAG=$(tr -d '[:space:]' < VERSION)
-          DATE=$(date -u +"%Y-%m-%d")
+          CV_VERSION=$(tr -d '[:space:]' < VERSION)
+          SITE_VERSION="site-${GITHUB_RUN_NUMBER}"
+          DEPLOY_DATE=$(date -u +"%Y-%m-%d")
 
           cat <<EOF > version.json
           {
-            "version": "$TAG",
-            "date": "$DATE"
+            "cvVersion": "$CV_VERSION",
+            "siteVersion": "$SITE_VERSION",
+            "deployedAt": "$DEPLOY_DATE"
           }
           EOF
 
