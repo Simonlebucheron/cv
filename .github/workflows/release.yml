@@ -1,0 +1,35 @@
+name: CV Release
+
+on:
+  push:
+    tags:
+      - cv-*
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Validate tag and version
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION_FILE="$(tr -d '[:space:]' < VERSION)"
+
+          test -f cv-simon-delaigue-fr.pdf
+
+          if [ "$TAG" != "$VERSION_FILE" ]; then
+            echo "Error: tag ($TAG) and VERSION ($VERSION_FILE) do not match"
+            exit 1
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: cv-simon-delaigue-fr.pdf

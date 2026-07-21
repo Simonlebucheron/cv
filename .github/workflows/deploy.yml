@@ -1,0 +1,60 @@
+name: Deploy CV to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - cv-simon-delaigue-fr.pdf
+      - index.html
+      - VERSION
+      - CNAME
+      - .github/workflows/deploy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Generate version.json for deployment
+        run: |
+          set -euo pipefail
+          TAG=$(tr -d '[:space:]' < VERSION)
+          DATE=$(date -u +"%Y-%m-%d")
+
+          cat <<EOF > version.json
+          {
+            "version": "$TAG",
+            "date": "$DATE"
+          }
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -4,12 +4,27 @@ on:
   push:
     branches:
       - main
-      - feat/version
+      - dev
+    paths:
+      - cv-simon-delaigue-fr.pdf
+      - index.html
+      - VERSION
+      - version.json
+      - .github/workflows/*.yml
   pull_request:
     branches:
       - main
+    paths:
+      - cv-simon-delaigue-fr.pdf
+      - index.html
+      - VERSION
+      - version.json
+      - .github/workflows/*.yml
+
+permissions:
+  contents: read
 env:
-  cv_file: cv-simon-delaigue-fr.pdf
+  CV_FILE: cv-simon-delaigue-fr.pdf
 
 jobs:
   check-cv:
@@ -20,30 +35,53 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Install tools
         run: |
-          sudo apt update
-          sudo apt install -y exiftool poppler-utils
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends exiftool poppler-utils
 
       - name: Check PDF exists
         run: |
-          test -f "$cv_file"
+          set -euo pipefail
+          test -f "$CV_FILE"
 
       - name: Check PDF size
         run: |
-          SIZE=$(stat -c%s "$cv_file")
+          set -euo pipefail
+          SIZE=$(stat -c%s "$CV_FILE")
           echo "PDF size: $SIZE bytes"
-          test $SIZE -lt 2000000
+          if [ "$SIZE" -ge 2000000 ]; then
+            echo "Error: PDF exceeds 2MB limit"
+            exit 1
+          fi
 
       - name: Extract PDF metadata
         run: |
-          exiftool "$cv_file"
+          set -euo pipefail
+          exiftool "$CV_FILE"
 
       - name: Check PDF pages
         run: |
-          pdfinfo "$cv_file" | grep Pages
+          set -euo pipefail
+          PAGES=$(pdfinfo "$CV_FILE" | awk '/^Pages:/ {print $2}')
+          echo "PDF pages: $PAGES"
+          test "$PAGES" -le 2
 
       - name: Check HTML
         run: |
+          set -euo pipefail
           test -f index.html
+
+      - name: Check PDF version matches VERSION file
+        run: |
+          set -euo pipefail
+          EXPECTED_VERSION=$(tr -d '[:space:]' < VERSION)
+
+          if ! pdftotext "$CV_FILE" - | tr -d '\r' | grep -Fq "$EXPECTED_VERSION"; then
+            echo "Error: PDF must include version $EXPECTED_VERSION"
+            exit 1
+          fi
