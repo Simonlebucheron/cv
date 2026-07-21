@@ -32,7 +32,7 @@ jobs:
 
       - name: Check PDF size
         run: |
-          SIZE=$(stat -c%s CV_SDELAIGUE_FR.pdf)
+          SIZE=$(stat -c%s "$cv_file")
           echo "PDF size: $SIZE bytes"
           test $SIZE -lt 2000000
 
