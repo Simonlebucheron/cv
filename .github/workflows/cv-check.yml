@@ -75,3 +75,13 @@ jobs:
         run: |
           set -euo pipefail
           test -f index.html
+
+      - name: Check PDF version matches VERSION file
+        run: |
+          set -euo pipefail
+          EXPECTED_VERSION=$(tr -d '[:space:]' < VERSION)
+
+          if ! pdftotext "$CV_FILE" - | tr -d '\r' | grep -Fq "$EXPECTED_VERSION"; then
+            echo "Error: PDF must include version $EXPECTED_VERSION"
+            exit 1
+          fi
