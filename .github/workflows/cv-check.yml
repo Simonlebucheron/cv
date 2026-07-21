@@ -28,7 +28,7 @@ jobs:
 
       - name: Check PDF exists
         run: |
-          test -f $"cv_file"
+          test -f "$cv_file"
 
       - name: Check PDF size
         run: |
@@ -38,11 +38,11 @@ jobs:
 
       - name: Extract PDF metadata
         run: |
-          exiftool $"cv_file"
+          exiftool "$cv_file"
 
       - name: Check PDF pages
         run: |
-          pdfinfo $"cv_file" | grep Pages
+          pdfinfo "$cv_file" | grep Pages
 
       - name: Check HTML
         run: |
