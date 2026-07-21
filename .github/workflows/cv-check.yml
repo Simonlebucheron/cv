@@ -10,7 +10,7 @@ on:
       - index.html
       - VERSION
       - version.json
-      - .github/workflows/cv-check.yml
+      - .github/workflows/*.yml
   pull_request:
     branches:
       - main
@@ -19,12 +19,12 @@ on:
       - index.html
       - VERSION
       - version.json
-      - .github/workflows/cv-check.yml
+      - .github/workflows/*.yml
 
 permissions:
   contents: read
 env:
-  cv_file: cv-simon-delaigue-fr.pdf
+  CV_FILE: cv-simon-delaigue-fr.pdf
 
 jobs:
   check-cv:
@@ -47,12 +47,12 @@ jobs:
       - name: Check PDF exists
         run: |
           set -euo pipefail
-          test -f "$cv_file"
+          test -f "$CV_FILE"
 
       - name: Check PDF size
         run: |
           set -euo pipefail
-          SIZE=$(stat -c%s "$cv_file")
+          SIZE=$(stat -c%s "$CV_FILE")
           echo "PDF size: $SIZE bytes"
           if [ "$SIZE" -ge 2000000 ]; then
             echo "Error: PDF exceeds 2MB limit"
@@ -62,36 +62,14 @@ jobs:
       - name: Extract PDF metadata
         run: |
           set -euo pipefail
-          exiftool "$cv_file"
+          exiftool "$CV_FILE"
 
       - name: Check PDF pages
         run: |
           set -euo pipefail
-          PAGES=$(pdfinfo "$cv_file" | awk '/^Pages:/ {print $2}')
+          PAGES=$(pdfinfo "$CV_FILE" | awk '/^Pages:/ {print $2}')
           echo "PDF pages: $PAGES"
           test "$PAGES" -le 2
-
-      - name: Generate version.json
-        run: |
-          set -euo pipefail
-          TAG=$(git describe --tags --match "cv-*" --abbrev=0 2>/dev/null || echo "cv-dev")
-
-          COMMIT=$(git rev-parse --short HEAD)
-
-          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          BUILD=${{ github.run_number }}
-
-          cat <<EOF > version.json
-          {
-            "cv_version": "$TAG",
-            "commit": "$COMMIT",
-            "published": "$DATE",
-            "build": $BUILD
-          }
-          EOF
-
-          cat version.json
 
       - name: Check HTML
         run: |

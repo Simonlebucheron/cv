@@ -1,0 +1,16 @@
+name: CV Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: |
+          echo "Release workflow scaffold is ready."
+          echo "Implement GitHub Release creation here when needed."
