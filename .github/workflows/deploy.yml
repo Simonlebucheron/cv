@@ -37,7 +37,7 @@ jobs:
       - name: Generate version.json for deployment
         run: |
           set -euo pipefail
-          TAG=$(git describe --tags --match "cv-*" --abbrev=0 2>/dev/null || echo "cv-dev")
+          TAG=$(tr -d '[:space:]' < VERSION)
           DATE=$(date -u +"%Y-%m-%d")
 
           cat <<EOF > version.json
