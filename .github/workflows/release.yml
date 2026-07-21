@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Validate tag and version
         run: |
@@ -23,8 +25,27 @@ jobs:
 
           test -f cv-simon-delaigue-fr.pdf
 
+          if ! [[ "$TAG" =~ ^cv-[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: tag must use format cv-x.y.z"
+            exit 1
+          fi
+
+          if ! [[ "$VERSION_FILE" =~ ^cv-[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: VERSION must use format cv-x.y.z"
+            exit 1
+          fi
+
           if [ "$TAG" != "$VERSION_FILE" ]; then
             echo "Error: tag ($TAG) and VERSION ($VERSION_FILE) do not match"
+            exit 1
+          fi
+
+      - name: Validate tag commit is on main
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/main"; then
+            echo "Error: release tag must point to a commit reachable from main"
             exit 1
           fi
 
