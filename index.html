@@ -7,6 +7,9 @@
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
         a { color: #0066cc; text-decoration: none; }
+        details { margin-top: 16px; }
+        summary { cursor: pointer; color: #666; font-size: 0.9rem; }
+        .tech-note { color: #666; font-size: 0.9rem; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -14,14 +17,20 @@
     <p>Bienvenue sur mon CV en ligne.</p>
     <a href="cv-simon-delaigue-fr.pdf" download>Télécharger le CV (PDF)</a>
         <p id="cv-version"></p>
-        <p id="site-version"></p>
+        <details>
+            <summary>Informations techniques</summary>
+            <p id="site-version" class="tech-note"></p>
+        </details>
 
         <script>
                 fetch("version.json", { cache: "no-store" })
                 .then(r => r.json())
                 .then(v => {
                     const cvVersion = v.cvVersion || v.version || "indisponible";
-                    const siteVersion = v.siteVersion || "indisponible";
+                    const rawSiteVersion = v.siteVersion || "";
+                    const siteVersion = rawSiteVersion && rawSiteVersion !== "site-local"
+                        ? rawSiteVersion
+                        : "non publiee";
                     const deployedAt = v.deployedAt || v.date || "indisponible";
 
                     document.getElementById("cv-version").textContent =
